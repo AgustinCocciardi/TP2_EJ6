@@ -100,13 +100,38 @@ for ($i = 0; $i -lt $longitud; $i++) {
 
 if ($numerador -eq 0) {
     Write-Output "El resultado de la operacion es: 0"
-
+    Write-Output "El resultado de la operacion es: 0" > salida.out
 }
 else {
     if ($numerador -lt 0) {
-        
+        $numerador*=(-1)
+        $negativo=1
     }
     else {
-        
+        $negativo=0
     }
+    $numero1= $numerador
+    $numero2= $denominador
+
+    while ($numero1 -ne $numero2) {
+        if ($numero1 -gt $numero2) {
+            $numero1-=$numero2
+        }
+        else {
+            $numero2-=$numero1
+        }
+    }
+
+    $comunDivisor=$numero1
+
+    $numerador/=$comunDivisor
+    $denominador/=$comunDivisor
+
+    if ($negativo -eq 1) {
+        $numerador*=(-1)
+    }
+
+    $resultado="$numerador/$denominador"
+    Write-Output "El resultado es: $resultado"
+    Write-Output "El resultado es: $resultado" > salida.out
 }
