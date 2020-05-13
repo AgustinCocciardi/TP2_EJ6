@@ -31,6 +31,14 @@ if($ruta -ne $true)
     }
     
 $numeros = Get-Content $f
+
+if($numeros -eq $null){
+    Write-Host "El archivo está vacío. Nada que operar"
+    Write-Output "El resultado es: "
+    Write-Output "El resultado es: " > salida.out
+    exit 2
+}
+
 $numeros = $numeros.Split(',')
 
 $longitud=$numeros.Length
@@ -60,29 +68,13 @@ for ($i = 0; $i -lt $longitud; $i++) {
     else {
         $mayor=$denominador
     }
+    
     $valor1 = $mayor%$numero -as [int]
     $valor2 = $mayor%$denominador -as [int]
-
-    Write-Host "Hora de calcular el MCM entre $numero y $denominador"
-    sleep 2
-    Write-Host "Resto de $mayor por $numero y por $denominador debe ser 0"
-    Write-Host "Resto de $mayor por $numero = $valor1"
-    Write-Host "Resto de $mayor por $denominador = $valor2"
-
-    $salida=0
-    Write-Host "$valor1 debe ser igual a $salida || $valor2 debe ser igual a $salida"
-
-    while($valor1 -ne $salida && $valor2 -ne $salida){
-        Write-Host "Entre al While porque $valor1 o $valor2 no son $salida"
-        Write-Host "----"
-        sleep 3
+    while($valor1 -ne 0 -or $valor2 -ne 0){
         $mayor++
         $valor1 = $mayor%$numero -as [int]
         $valor2 = $mayor%$denominador -as [int]
-        Write-Host "Resto de $mayor por $numero y por $denominador debe ser 0"
-        Write-Host "Resto de $mayor por $numero = $valor1"
-        Write-Host "Resto de $mayor por $denominador = $valor2"
-        Write-Host "$valor1 debe ser igual a $salida || $valor2 debe ser igual a $salida"
      }
 
     $denominador=$mayor
@@ -131,7 +123,14 @@ else {
         $numerador*=(-1)
     }
 
-    $resultado="$numerador/$denominador"
-    Write-Output "El resultado es: $resultado"
-    Write-Output "El resultado es: $resultado" > salida.out
+    if($denominador -eq 1){
+        Write-Output "El resultado es: $numerador"
+        Write-Output "El resultado es: $numerador" > salida.out
+    }
+    else{
+        $resultado="$numerador/$denominador"
+        Write-Output "El resultado es: $resultado"
+        Write-Output "El resultado es: $resultado" > salida.out
+    }
+    
 }
