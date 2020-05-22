@@ -4,33 +4,43 @@ El script recibe un archivo de texto plano con numeros fraccionarios, y deberá 
 
 
 .DESCRIPTION
-Para ejecutar el Script se debe enviar una ruta valida con un archivo de texto plano que contenga numeros fraccionarios (Anteponiendo -f), donde cada numero se encuentre separado por una coma (,). 
+Para ejecutar el Script se debe enviar una ruta valida con un archivo de texto plano que contenga numeros fraccionarios (Anteponiendo -Path), donde cada numero se encuentre separado por una coma (,). 
 
 El script hará la suma y luego mostrará el resultado por pantalla y después en un archivo llamado salida.out, el cual será creado en el mismo directorio del script. Si el archivo ya existe, lo sobreescribirá.
 
 Paramentros a enviar:
 --------------------
 
--f path_Archivo_Entrada 
+-Path path_Archivo_Entrada 
 
 El archivo de entrada puede ser una ruta tanto absoluta como relativa.
 
 .NOTES
-INTEGRANTES - TP2 - Ejercicio 6
- * Agustin Cocciardi - 40231779
+# ALUMNOS GRUPO 8 - Trabajo Practico 2
+# Ejercicio 6
+# 40231779 - Cocciardi, Agustin
+# 40078823 - Biscaia, Elías
+# 40388978 - Varela, Daniel
+# 37841788 - Sullca, Willian
+# 38056215 - Aguilera, Erik 
 #>
 
 Param( 
-    [Parameter(Mandatory=$true)][string] $f
+    [Parameter(Mandatory=$true)][string] $Path
 )
 
-$ruta = Test-Path $f
+
+$Ruta = Join-Path -Path $PWD -ChildPath $Path
+
+$Path = $Ruta
+
+$ruta = Test-Path $Path
 if($ruta -ne $true)
 	{Write-Host "La ruta del archivo de texto no es valida."
 	 exit 1;
     }
-    
-$numeros = Get-Content $f
+
+$numeros = Get-Content "$Path"
 
 if($numeros -eq $null){
     Write-Host "El archivo está vacío. Nada que operar"
@@ -55,39 +65,49 @@ for ($i = 0; $i -lt $longitud; $i++) {
         $numeros[$i]=$variable
     }
     #Write-Output $numeros[$i]
+    #sleep 1
 }
 
 $denominador=1
 #Empiezo a calcular el denominador
 for ($i = 0; $i -lt $longitud; $i++) {
-    $nuevoNumero= $numeros[$i].Split('/')
-    $numero = $nuevoNumero[1] -as [int]
-    if ($numero -gt $denominador) {
-        $mayor=$numero
-    }
-    else {
-        $mayor=$denominador
-    }
-    
-    $valor1 = $mayor%$numero -as [int]
-    $valor2 = $mayor%$denominador -as [int]
-    while($valor1 -ne 0 -or $valor2 -ne 0){
-        $mayor++
+    if ($numeros[$i].Length -ne 1 -and $numeros[$i].Length -ne 2) {
+        $nuevoNumero= $numeros[$i].Split('/')
+        $numero = $nuevoNumero[1] -as [int]
+        if ($numero -gt $denominador) {
+            $mayor=$numero
+        }
+        else {
+            $mayor=$denominador
+        }
+        
         $valor1 = $mayor%$numero -as [int]
         $valor2 = $mayor%$denominador -as [int]
-     }
+        while($valor1 -ne 0 -or $valor2 -ne 0){
+            $mayor++
+            $valor1 = $mayor%$numero -as [int]
+            $valor2 = $mayor%$denominador -as [int]
+        }
 
-    $denominador=$mayor
+        $denominador=$mayor
+    }
 }
 
 #Empiezo a calcular el numerador
 $numerador=0
 for ($i = 0; $i -lt $longitud; $i++) {
-    $nuevoNumero= $numeros[$i].Split('/')
-    $superior = $nuevoNumero[0] -as [int]
-    $inferior = $nuevoNumero[1] -as [int]
-    $auxiliar= ($denominador/$inferior)*$superior
-    $numerador+=$auxiliar
+    if ($numeros[$i].Length -eq 1 -or $numeros[$i].Length -eq 2) {
+        $nuevoNumero= $numeros[$i] -as [int]
+        $numerador+= ($denominador*$nuevoNumero)
+    }
+    else {
+        $nuevoNumero= $numeros[$i].Split('/')
+        $superior = $nuevoNumero[0] -as [int]
+        $inferior = $nuevoNumero[1] -as [int]
+        $auxiliar= ($denominador/$inferior)*$superior
+        $numerador+=$auxiliar    
+    }
+    
 }
 
 if ($numerador -eq 0) {
